@@ -112,7 +112,7 @@ fetch("https://example.com/wp-json/custom/v1/verify", {
 ---
 
 ### Notes
-- The `X-WP-Nonce` header is required to ensure the request originates from a logged-in user.
+- The `X-WP-Nonce` header is required to ensure the request originates from a logged-in user. The wpApiSettings object "disappears" after some minutes from the browser-window scope. Be sure to have fetched the JWT by then.
 - Tokens are signed using the secret key defined in `wp-config.php`. Keep this key secure.
 - Avoid exposing token verification endpoints directly to untrusted environments (e.g., browsers).
 
