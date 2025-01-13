@@ -1,30 +1,58 @@
-# wordpress_get-jwt-token
-Adds the get-jwt-token functionality
 
-Attention: Using this may be a bad idea. [See class comments](https://github.com/fasihi01/wordpress_get-jwt-token/blob/a028048db8674b069ba38694fe1eea072428787d/get-jwt-token-api.php#L4)
+# WordPress Get-JWT-Token Plugin
 
-Installation:
+Adds the functionality to generate and verify JWT tokens in WordPress.
 
-1. copy get-jwt-token-api.php to /var/www/html/wp-content/plugins/get-jwt-token-api
-2. generate your-256-bit-secret somewhere and in /var/www/html/wp-config.php add at bottom:
-define('JWT_AUTH_SECRET_KEY', 'your-256-bit-secret')
+⚠️ **Attention**: Using this plugin might introduce security risks if not implemented carefully. [See class comments for details](https://github.com/fasihi01/wordpress_get-jwt-token/blob/a028048db8674b069ba38694fe1eea072428787d/get-jwt-token-api.php#L4).
 
+---
 
-3. in wordpress-plugins, find and activate the plugin
+## Installation
 
-4. make sure that firebase/php-jwt is installed, if not:
+### Step 1: Copy the Plugin File
+Copy the `get-jwt-token-api.php` file to the following directory on your WordPress server:
+```
+/var/www/html/wp-content/plugins/get-jwt-token-api
+```
 
-if no composer is installed go and get it. It may still be:
-curl -sS https://getcomposer.org/installer | php
-mv composer.phar /usr/local/bin/composer
+---
 
-then to install the firebase/php-jwt:
-cd /var/www/html
-composer require firebase/php-jwt
+### Step 2: Generate a Secret Key
+1. Generate a secure secret key (e.g., a 256-bit key).
+2. Add the key to your `wp-config.php` file:
+    ```php
+    define('JWT_AUTH_SECRET_KEY', 'your-256-bit-secret');
+    ```
 
+---
 
-5. In order to fetch the token do something like this in your logged-in-to-wordpress-browserwindow's F12:
-/** fetch **/
+### Step 3: Activate the Plugin
+1. In your WordPress admin panel, navigate to **Plugins**.
+2. Find the "Get JWT Token" plugin and activate it.
+
+---
+
+### Step 4: Install the `firebase/php-jwt` Library
+1. Ensure Composer is installed on your server. If not, install it:
+    ```bash
+    curl -sS https://getcomposer.org/installer | php
+    mv composer.phar /usr/local/bin/composer
+    ```
+
+2. Install the `firebase/php-jwt` library:
+    ```bash
+    cd /var/www/html
+    composer require firebase/php-jwt
+    ```
+
+---
+
+## Usage
+
+### Fetch a JWT Token
+To fetch a token, run the following code in your browser's developer console (**F12**) while logged into WordPress:
+
+```javascript
 fetch('https://example.com/wp-json/custom/v1/token', {
     method: 'POST',
     headers: {
@@ -42,11 +70,16 @@ fetch('https://example.com/wp-json/custom/v1/token', {
         }
     })
     .catch(error => console.error('Fetch error:', error));
+```
 
+---
 
+### Verify a JWT Token
+Token verification is primarily for **server-to-server communication**. While it can be tested in the browser, it is not intended for frontend use.
 
-6. In order to verify the token, derive the server-to-server-communication from this test-fetch (it makes not much sense to do this in the browser except for testing):
-/** verify **/
+Example fetch request to verify a token:
+
+```javascript
 const jwtToken = "eyJ0....HE";
 
 fetch("https://example.com/wp-json/custom/v1/verify", {
@@ -74,4 +107,22 @@ fetch("https://example.com/wp-json/custom/v1/verify", {
     .catch(error => {
         console.error("Fetch error:", error);
     });
+```
 
+---
+
+### Notes
+- The `X-WP-Nonce` header is required to ensure the request originates from a logged-in user.
+- Tokens are signed using the secret key defined in `wp-config.php`. Keep this key secure.
+- Avoid exposing token verification endpoints directly to untrusted environments (e.g., browsers).
+
+---
+
+## Security Considerations
+1. Ensure the `JWT_AUTH_SECRET_KEY` is strong and never exposed publicly.
+2. If roles or permissions change frequently, implement a token revocation mechanism (e.g., a blacklist).
+3. Always use HTTPS to prevent token interception.
+
+---
+
+Let me know if additional details or adjustments are needed! 🚀
