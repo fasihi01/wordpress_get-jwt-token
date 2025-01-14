@@ -57,7 +57,7 @@ fetch('https://example.com/wp-json/custom/v1/token', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
-        'X-WP-Nonce': wpApiSettings.nonce,
+        'X-WP-Nonce': window.wpRestNonce, //todo: this may be a security issue, the value is set here https://github.com/fasihi01/wordpress_get-jwt-token/blob/ff697999b4682b4555a92426a95664954ca96be9/get-jwt-token-api.php#L40
     },
     credentials: 'include'
 })
