@@ -35,6 +35,13 @@ add_action('rest_api_init', function () {
     ]);
 });
 
+function pass_rest_nonce_to_vue() {
+            echo '<script>';
+                echo 'window.wpRestNonce = "' . esc_js( wp_create_nonce( 'wp_rest' ) ) . '";';
+                echo '</script>';
+}
+add_action( 'wp_head', 'pass_rest_nonce_to_vue' );
+
 function verify_jwt_token(WP_REST_Request $request) {
     $token = $request->get_param('token');
     $secret_key = defined('JWT_AUTH_SECRET_KEY') ? JWT_AUTH_SECRET_KEY : false;
